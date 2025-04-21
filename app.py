@@ -1,3 +1,4 @@
+from functools import wraps
 import os
 
 import httpx
@@ -21,6 +22,28 @@ if not all([FLASK_SECRET_KEY, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET]):
 
 app = Quart(__name__)
 app.secret_key = FLASK_SECRET_KEY
+
+
+def login_required(json_response=False):
+    """View decorator to confirm login. Redirects or returns JSON error on failure.
+
+    Args:
+        json_response: bool - Whether to return a JSON response instead of
+            redirecting on failure. Default False.
+    """
+    def decorator(f):
+        @wraps(f)
+        async def decorated_view(*args, **kwargs):
+            # Login check
+            if "github_user" not in session:
+                if json_response:
+                    return jsonify({"error": "Login required"}), 401
+
+                return redirect(url_for("login"))
+
+            return await f(*args, **kwargs)
+        return decorated_view
+    return decorator
 
 
 def github_headers():
@@ -77,11 +100,13 @@ async def callback():
 
 
 @app.route("/repos")
+@login_required()
 async def repos():
     return await render_template("repos.html")
 
 
 @app.route("/api/repos")
+@login_required(json_response=True)
 async def list_repos():
     async with httpx.AsyncClient() as client:
         resp = await client.get(f"{GITHUB_API_URL}/user/repos", headers=github_headers())
@@ -105,6 +130,7 @@ async def list_repos():
 
 
 @app.route("/api/repos/<string:repo>/make-private", methods=["GET"])
+@login_required(json_response=True)
 async def make_private(repo):
     async with httpx.AsyncClient() as client:
         resp = await client.patch(
@@ -121,6 +147,7 @@ async def make_private(repo):
 
 
 @app.route("/api/repos/<string:repo>/make-public", methods=["GET"])
+@login_required(json_response=True)
 async def make_public(repo):
     async with httpx.AsyncClient() as client:
         resp = await client.patch(
