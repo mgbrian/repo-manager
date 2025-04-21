@@ -4,7 +4,7 @@ An app to manage your Github repositories, providing a more conventient way to m
 
 ## Setup
 
-1. **Create a GitHub OAuth App**
+1. Create a GitHub OAuth App:
 
    - Go to [GitHub Developer Settings](https://github.com/settings/developers).
    - Register a new OAuth app.
