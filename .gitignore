@@ -1,0 +1,6 @@
+env.py
+# venv folder
+.requirements/
+media/
+log/
+.DS_Store
