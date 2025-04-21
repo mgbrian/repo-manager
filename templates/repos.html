@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Github Manager</title>
-    </head>
-    <body>
-        <h1>Repos List</h1>
-    </body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+    <ul id="repo-list-container"></ul>
+{% endblock %}
+
+{% block page_scripts %}
+<script>
+  REPOS_LIST_ENDPOINT = "{{ url_for('list_repos') }}"
+</script>
+<script src="{{ url_for('static', filename='js/repos.js') }}"></script>
+{% endblock %}
