@@ -185,6 +185,50 @@ async def list_collaborators(repo):
     return jsonify(collaborators)
 
 
+@app.route("/api/repos/<string:repo>/collaborators/add", methods=["POST"])
+@login_required(json_response=True)
+async def add_collaborator(repo):
+    request_data = await request.get_json()
+    username = request_data.get("username")
+
+    if not username:
+        return jsonify({"error": "Username not provided."}), 400
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.put(
+            f"{GITHUB_API_URL}/repos/{session['github_user']}/{repo}/collaborators/{username}",
+            headers=github_headers(),
+            # Default permission for a repo owned by a personal account is "push"
+            json={"permission": "push"},
+        )
+
+    if resp.status_code not in [201, 204]:
+        return jsonify({"error": "Failed to add collaborator"}), 400
+
+    return jsonify({"message": f"Added '{username}' as a collaborator."})
+
+
+@app.route("/api/repos/<string:repo>/collaborators/remove/<string:username>", methods=["GET"])
+@login_required(json_response=True)
+async def remove_collaborator(repo, username):
+    username = username.strip()
+
+    # TODO: Think about implications of turning this on.
+    if username == session['github_user']:
+        return jsonify({"error": "App does not allow you to remove yourself from repos, yet."}), 400
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.delete(
+            f"{GITHUB_API_URL}/repos/{session['github_user']}/{repo}/collaborators/{username}",
+            headers=github_headers(),
+        )
+
+    if resp.status_code != 204:
+        return jsonify({"error": f"Failed to remove '{username}' as a collaborator"}), 400
+
+    return jsonify({"message": f"Removed '{username}' from repo."})
+
+
 if __name__ == "__main__":
     app.run(
         debug=True,
