@@ -104,6 +104,37 @@ async def list_repos():
     return jsonify(repo_data)
 
 
+@app.route("/api/repos/<string:repo>/make-private", methods=["GET"])
+async def make_private(repo):
+    async with httpx.AsyncClient() as client:
+        resp = await client.patch(
+            f"{GITHUB_API_URL}/repos/{session['github_user']}/{repo}",
+            headers=github_headers(),
+            json={"private": True},
+        )
+
+    # TODO: More granular error-handling e.g. repo not found/not owned by user.
+    if resp.status_code != 200:
+        return jsonify({"error": "Failed to update visibility to private."}), 400
+
+    return jsonify({"message": f"Repo '{repo}' is now private."})
+
+
+@app.route("/api/repos/<string:repo>/make-public", methods=["GET"])
+async def make_public(repo):
+    async with httpx.AsyncClient() as client:
+        resp = await client.patch(
+            f"{GITHUB_API_URL}/repos/{session['github_user']}/{repo}",
+            headers=github_headers(),
+            json={"private": False},
+        )
+
+    if resp.status_code != 200:
+        return jsonify({"error": "Failed to update visibility to public."}), 400
+
+    return jsonify({"message": f"Repo '{repo}' is now public."})
+
+
 if __name__ == "__main__":
     app.run(
         debug=True,
