@@ -109,7 +109,8 @@ async def repos():
 @login_required(json_response=True)
 async def list_repos():
     async with httpx.AsyncClient() as client:
-        resp = await client.get(f"{GITHUB_API_URL}/user/repos", headers=github_headers())
+        # TODO: Make it possible to list all repos.
+        resp = await client.get(f"{GITHUB_API_URL}/user/repos?per_page=100&page=1", headers=github_headers())
 
     if resp.status_code != 200:
         return jsonify({"error": "Failed to fetch repos"}), 400
