@@ -1,5 +1,4 @@
 const repoListContainer = document.getElementById("repo-list-container");
-const repoListTable = document.getElementById("repo-list-table");
 
 document.addEventListener("DOMContentLoaded", renderRepos);
 
@@ -24,6 +23,8 @@ async function renderRepos() {
     repoListContainer.innerHTML = "<p>No repositories found.</p>";
     return;
   }
+  const repoListTable = document.createElement("table");
+  repoListTable.id = "repo-list-table";
   repoListTable.innerHTML = `
         <thead>
           <tr>
@@ -36,8 +37,6 @@ async function renderRepos() {
   const repoTableBody = document.createElement("tbody");
 
   repos.forEach((repo) => {
-    const displayName = `${repo.owner}/${repo.name}`;
-    const visibility = repo.private ? "Private" : "Public";
     const toggleVisibilityUrlGenerator = repo.private
       ? generateMakePublicUrl
       : generateMakePrivateUrl;
@@ -47,9 +46,11 @@ async function renderRepos() {
 
     repoTableBody.innerHTML += `
         <tr data-created-date="${created}" data-updated-date="${updated}">
-          <td><a href="${repo.url}" target="_blank">${displayName}</a></td>
-          <td>${visibility}</td>
-          <td><button class="toggle-visibility-button" data-href="${toggleVisibilityLink}">Toggle Visibility</button></td>
+          <td><a href="${repo.url}" target="_blank">${repo.name}</a></td>
+          <td class="visibility-cell">
+            ${repo.private ? "Private" : "Public"}
+            <button class="toggle-visibility-button" data-href="${toggleVisibilityLink}">Toggle</button>
+          </td>
         </tr>
       `;
   });
@@ -61,6 +62,7 @@ async function renderRepos() {
     button.addEventListener("click", toggleVisibility);
   }
   repoListTable.appendChild(repoTableBody);
+  repoListContainer.appendChild(repoListTable);
 }
 
 async function toggleVisibility(event) {
