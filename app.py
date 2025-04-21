@@ -39,7 +39,7 @@ def login_required(json_response=False):
                 if json_response:
                     return jsonify({"error": "Login required"}), 401
 
-                return redirect(url_for("login"))
+                return redirect(url_for("home"))
 
             return await f(*args, **kwargs)
         return decorated_view
