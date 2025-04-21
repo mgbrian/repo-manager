@@ -1,6 +1,7 @@
 const repoListContainer = document.getElementById("repo-list-container");
+const repoListTable = document.getElementById("repo-list-table");
 
-document.addEventListener("DOMContentLoaded", loadRepos);
+document.addEventListener("DOMContentLoaded", renderRepos);
 
 async function loadRepos() {
   try {
@@ -10,35 +11,69 @@ async function loadRepos() {
     }
 
     const repos = await response.json();
-
-    if (repos.length === 0) {
-      repoListContainer.innerHTML = "<li>No repositories found.</li>";
-      return;
-    }
-
-    /* Structure:
-      {
-          "created_at": "2022-01-25T20:40:03Z",
-          "name": "https://github.com/..",
-          "owner": "...",
-          "private": false,
-          "updated_at": "2022-06-27T02:54:43Z",
-          "url": "https://github.com/..."
-        },
-    */
-    repos.forEach((repo) => {
-      const li = document.createElement("li");
-      const a = document.createElement("a");
-      a.href = repo.url;
-      a.textContent = `${repo.owner}/${repo.name}`;
-      a.target = "_blank";
-      li.appendChild(a);
-      repoListContainer.appendChild(li);
-    });
+    return repos;
   } catch (err) {
     console.error(err);
-    repoListContainer.innerHTML = "<li>Error loading repositories.</li>";
+    repoListContainer.innerHTML = "<p>Error loading repositories.</p>";
   }
+}
+
+async function renderRepos() {
+  const repos = await loadRepos();
+  if (repos.length === 0) {
+    repoListContainer.innerHTML = "<p>No repositories found.</p>";
+    return;
+  }
+  repoListTable.innerHTML = `
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Visibility</th>
+            <th></th>
+          </tr>
+        </thead>
+    `;
+  const repoTableBody = document.createElement("tbody");
+
+  repos.forEach((repo) => {
+    const displayName = `${repo.owner}/${repo.name}`;
+    const visibility = repo.private ? "Private" : "Public";
+    const toggleVisibilityUrlGenerator = repo.private
+      ? generateMakePublicUrl
+      : generateMakePrivateUrl;
+    const toggleVisibilityLink = toggleVisibilityUrlGenerator(repo.name);
+    const created = new Date(repo.created_at).toLocaleString();
+    const updated = new Date(repo.updated_at).toLocaleString();
+
+    repoTableBody.innerHTML += `
+        <tr data-created-date="${created}" data-updated-date="${updated}">
+          <td><a href="${repo.url}" target="_blank">${displayName}</a></td>
+          <td>${visibility}</td>
+          <td><button class="toggle-visibility-button" data-href="${toggleVisibilityLink}">Toggle Visibility</button></td>
+        </tr>
+      `;
+  });
+
+  const toggleVisibilityButtons = repoTableBody.getElementsByClassName(
+    "toggle-visibility-button",
+  );
+  for (let button of toggleVisibilityButtons) {
+    button.addEventListener("click", toggleVisibility);
+  }
+  repoListTable.appendChild(repoTableBody);
+}
+
+async function toggleVisibility(event) {
+  const clickedButton = event.currentTarget;
+
+  const toggleVisibilityLink = clickedButton.dataset.href;
+
+  const response = await fetch(toggleVisibilityLink);
+  if (!response.ok) {
+    throw new Error("Error toggling visibility.");
+  }
+
+  renderRepos();
 }
 
 async function addCollaborator(repoName, username) {

@@ -1,11 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
-    <ul id="repo-list-container"></ul>
+    <div id="repo-list-container">
+        <table id="repo-list-table" class=""></table>
+    </div>
 {% endblock %}
 
 {% block page_scripts %}
 <script>
-  REPOS_LIST_ENDPOINT = "{{ url_for('list_repos') }}"
+  const REPOS_LIST_ENDPOINT = "{{ url_for('list_repos') }}";
+
+  function generateMakePrivateUrl(repoName) {
+    return `{{ url_for('make_private', repo='${repoName}') | replace('%7B', '{') | replace('%7D', '}') }}`
+  }
+
+  function generateMakePublicUrl(repoName) {
+    return `{{ url_for('make_public', repo='${repoName}') | replace('%7B', '{') | replace('%7D', '}') }}`
+  }
 </script>
 <script src="{{ url_for('static', filename='js/repos.js') }}"></script>
 {% endblock %}
