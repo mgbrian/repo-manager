@@ -1,7 +1,7 @@
 import os
 
 import httpx
-from quart import Quart, session, redirect, request, render_template, url_for
+from quart import Quart, session, redirect, request, render_template, url_for, jsonify
 
 try:
     import env
@@ -79,6 +79,29 @@ async def callback():
 @app.route("/repos")
 async def repos():
     return await render_template("repos.html")
+
+
+@app.route("/api/repos")
+async def list_repos():
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(f"{GITHUB_API_URL}/user/repos", headers=github_headers())
+
+    if resp.status_code != 200:
+        return jsonify({"error": "Failed to fetch repos"}), 400
+
+    repo_data = [
+        {
+            "name": repo["html_url"],
+            "url": repo["html_url"],
+            "owner": repo["owner"]["login"],
+            "private": repo["private"],
+            "created_at": repo["created_at"],
+            "updated_at": repo["updated_at"],
+        }
+        for repo in resp.json()
+    ]
+
+    return jsonify(repo_data)
 
 
 if __name__ == "__main__":
