@@ -123,7 +123,7 @@ async def list_repos():
             "created_at": repo["created_at"],
             "updated_at": repo["updated_at"],
         }
-        for repo in resp.json()
+        for repo in resp.json() if repo["owner"]["login"] == session["github_user"]
     ]
 
     return jsonify(repo_data)
