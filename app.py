@@ -194,6 +194,7 @@ async def add_collaborator(repo):
     if not username:
         return jsonify({"error": "Username not provided."}), 400
 
+    username = username.strip()
     async with httpx.AsyncClient() as client:
         resp = await client.put(
             f"{GITHUB_API_URL}/repos/{session['github_user']}/{repo}/collaborators/{username}",
@@ -208,11 +209,16 @@ async def add_collaborator(repo):
     return jsonify({"message": f"Added '{username}' as a collaborator."})
 
 
-@app.route("/api/repos/<string:repo>/collaborators/remove/<string:username>", methods=["GET"])
+@app.route("/api/repos/<string:repo>/collaborators/remove>", methods=["POST"])
 @login_required(json_response=True)
-async def remove_collaborator(repo, username):
-    username = username.strip()
+async def remove_collaborator(repo):
+    request_data = await request.get_json()
+    username = request_data.get("username")
 
+    if not username:
+        return jsonify({"error": "Username not provided."}), 400
+
+    username = username.strip()
     # TODO: Think about implications of turning this on.
     if username == session['github_user']:
         return jsonify({"error": "App does not allow you to remove yourself from repos, yet."}), 400
