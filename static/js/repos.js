@@ -40,3 +40,33 @@ async function loadRepos() {
     repoListContainer.innerHTML = "<li>Error loading repositories.</li>";
   }
 }
+
+async function addCollaborator(repoName, username) {
+  try {
+    // TODO: Parametrize this!
+    const response = await fetch(`/api/repos/${repoName}/collaborators/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error:", errorData);
+      alert(
+        "Failed to add collaborator: " + (errorData.error || "Unknown error"),
+      );
+    } else {
+      const data = await response.json();
+      console.log("Success:", data);
+      alert(data.message);
+    }
+  } catch (error) {
+    console.error("Request failed:", error);
+    alert("An unexpected error occurred.");
+  }
+}
