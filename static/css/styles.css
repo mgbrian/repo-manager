@@ -29,6 +29,7 @@ header {
 
 main {
     margin-top: calc(var(--header-height) + 40px);
+    margin-bottom: 40px;
 }
 
 a {
