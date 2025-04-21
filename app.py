@@ -162,6 +162,29 @@ async def make_public(repo):
     return jsonify({"message": f"Repo '{repo}' is now public."})
 
 
+@app.route("/api/repos/<string:repo>/collaborators", methods=["GET"])
+@login_required(json_response=True)
+async def list_collaborators(repo):
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(
+            f"{GITHUB_API_URL}/repos/{session['github_user']}/{repo}/collaborators",
+            headers=github_headers(),
+        )
+
+    if resp.status_code != 200:
+        return jsonify({"error": "Failed to fetch collaborators"}), 400
+
+    collaborators = [
+        {
+            "name": collaborator["login"],
+            "avatar_url": collaborator["avatar_url"]
+        }
+        for collaborator in resp.json()
+    ]
+
+    return jsonify(collaborators)
+
+
 if __name__ == "__main__":
     app.run(
         debug=True,
