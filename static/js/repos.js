@@ -45,10 +45,10 @@ async function renderRepos() {
           <td class="actions-cell">
             <div class="action-buttons-container">
               <button class="toggle-visibility-button" data-href="${toggleVisibilityLink}">
-                <span class="material-icons" id="toggle-visibility-icon">${repo.private ? "visibility" : "visibility_off"}</span>
+                <span class="material-icons toggle-visibility-icon">${repo.private ? "visibility" : "visibility_off"}</span>
               </button>
               <button class="collaborators-button" data-href="">
-                <span class="material-icons" id="mic-icon">group</span>
+                <span class="material-icons show-collaborators-icon">group</span>
               </button>
             </div>
           </td>
