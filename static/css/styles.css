@@ -1,5 +1,6 @@
 :root {
     --header-height: 100px;
+    --content-max-width: 900px;
 }
 
 body {
@@ -17,14 +18,23 @@ header {
     background: #e1e1e1;
 }
 
-#logo {
-    margin: 0 auto;
-    max-width: 900px;
+#header-container {
     width: 90%;
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#logo {
+    margin: 0;
+    margin-right: auto;
     font-size: 2rem;
     font-weight: bold;
     letter-spacing: 1.5px;
     text-transform: uppercase;
+    text-align: left;
 }
 
 main {
@@ -41,7 +51,7 @@ a {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    max-width: 900px;
+    max-width: var(--content-max-width);
     margin-left: auto;
     margin-right: auto;
     border: 0.5px solid rgba(200, 200, 200);

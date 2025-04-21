@@ -11,8 +11,16 @@
     </head>
     <body>
         <header>
-            <h1 id="logo">Repo Manager</h1>
+            <div id="header-container">
+                <h1 id="logo">Repo Manager</h1>
+                {% if "github_user" in session %}
+                <div id="user-login-container">
+                    <a href="https://github.com/{{ session["github_user"] }}" target="_blank">{{ session["github_user"] }}</a>
+                </div>
+                {% endif %}
+            </div>
         </header>
+
         <main>
             {% block content %}{% endblock %}
         </main>
