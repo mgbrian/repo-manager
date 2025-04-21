@@ -67,14 +67,40 @@ td {
 }
 
 .visibility-cell {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    width: 200px;
     text-transform: uppercase;
     font-size: 1.15rem;
     letter-spacing: 1px;
+}
+
+.actions-cell {
+}
+
+.action-buttons-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+.action-buttons-container button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 10px;
+    margin-left: 0px;
+    margin-bottom: 0px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    outline: none;
+
+    transition: all 250ms ease-in-out;
+}
+
+.action-buttons-container button:hover {
+    color: black;
 }
 
 .toggle-visibility-button {

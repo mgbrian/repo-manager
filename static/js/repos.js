@@ -25,15 +25,7 @@ async function renderRepos() {
   }
   const repoListTable = document.createElement("table");
   repoListTable.id = "repo-list-table";
-  repoListTable.innerHTML = `
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Visibility</th>
-            <th></th>
-          </tr>
-        </thead>
-    `;
+  repoListTable.innerHTML = "";
   const repoTableBody = document.createElement("tbody");
 
   repos.forEach((repo) => {
@@ -49,7 +41,16 @@ async function renderRepos() {
           <td><a href="${repo.url}" target="_blank">${repo.name}</a></td>
           <td class="visibility-cell">
             ${repo.private ? "Private" : "Public"}
-            <button class="toggle-visibility-button" data-href="${toggleVisibilityLink}">Toggle</button>
+          </td>
+          <td class="actions-cell">
+            <div class="action-buttons-container">
+              <button class="toggle-visibility-button" data-href="${toggleVisibilityLink}">
+                <span class="material-icons" id="toggle-visibility-icon">${repo.private ? "visibility" : "visibility_off"}</span>
+              </button>
+              <button class="collaborators-button" data-href="">
+                <span class="material-icons" id="mic-icon">group</span>
+              </button>
+            </div>
           </td>
         </tr>
       `;
