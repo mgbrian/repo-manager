@@ -116,7 +116,7 @@ async def list_repos():
 
     repo_data = [
         {
-            "name": repo["html_url"],
+            "name": repo["name"],
             "url": repo["html_url"],
             "owner": repo["owner"]["login"],
             "private": repo["private"],
