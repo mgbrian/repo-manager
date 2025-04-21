@@ -99,6 +99,12 @@ async def callback():
     return redirect("/repos")
 
 
+@app.route("/logout")
+async def logout():
+    session.clear()
+    return redirect(url_for("home"))
+
+
 @app.route("/repos")
 @login_required()
 async def repos():

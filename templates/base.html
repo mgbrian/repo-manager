@@ -16,6 +16,9 @@
                 {% if "github_user" in session %}
                 <div id="user-login-container">
                     <a href="https://github.com/{{ session["github_user"] }}" target="_blank">{{ session["github_user"] }}</a>
+                    <a href="{{ url_for('logout') }}">
+                        <span class="material-icons">logout</span>
+                    </a>
                 </div>
                 {% endif %}
             </div>

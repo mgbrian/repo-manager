@@ -37,6 +37,20 @@ header {
     text-align: left;
 }
 
+#user-login-container {
+    display: flex;
+    gap: 25px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#user-login-container > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 main {
     margin-top: calc(var(--header-height) + 40px);
     margin-bottom: 40px;
@@ -44,6 +58,13 @@ main {
 
 a {
     text-decoration: none;
+}
+
+#login-link {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
 }
 
 #repo-list-container {
