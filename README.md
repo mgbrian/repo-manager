@@ -1,6 +1,6 @@
 # Github Manager
 
-An app to manage your Github repositories, providing a more conventient way to manage visibility, collaborators and permissions.
+An app to manage your Github repositories, providing a more convenient way to manage visibility, collaborators and permissions.
 
 ## Setup
 
