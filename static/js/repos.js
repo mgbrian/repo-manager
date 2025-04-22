@@ -36,7 +36,7 @@ async function loadRepos() {
   @param {boolean} refreshFromDB - Whether to refresh repos from the server.
     If this is set to false, the repo list most recently pulled from the server
     is used. Default = false.
- */
+*/
 async function renderRepos(refreshFromDB = false) {
   if (refreshFromDB) {
     try {
@@ -118,7 +118,7 @@ async function toggleVisibility(event) {
   @param {Array<Object>} - An array of repos.
 
   @returns {Array<Object>} - A subset of the input array with filters applied.
- */
+*/
 function filterRepos(repos) {
   let filteredRepos = repos;
   if (visibilitySubset == "private") {
