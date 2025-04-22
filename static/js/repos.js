@@ -18,6 +18,10 @@ searchInput.addEventListener("input", () => {
   renderRepos();
 });
 
+/* Fetch list of repositories from the backend.
+
+  @returns {Array<Object>} - An array of repository objects.
+*/
 async function loadRepos() {
   const response = await fetch(REPOS_LIST_ENDPOINT);
   if (!response.ok) {
@@ -27,6 +31,12 @@ async function loadRepos() {
   return await response.json();
 }
 
+/* Render list of repositories in the UI, applying any filters from the UI.
+
+  @param {boolean} refreshFromDB - Whether to refresh repos from the server.
+    If this is set to false, the repo list most recently pulled from the server
+    is used. Default = false.
+ */
 async function renderRepos(refreshFromDB = false) {
   if (refreshFromDB) {
     try {
@@ -89,6 +99,7 @@ async function renderRepos(refreshFromDB = false) {
   repoListContainer.appendChild(repoListTable);
 }
 
+/* Event handler for the repo visibility toggle buttons. */
 async function toggleVisibility(event) {
   const clickedButton = event.currentTarget;
 
@@ -102,6 +113,12 @@ async function toggleVisibility(event) {
   renderRepos(true);
 }
 
+/* Applies the current UI filters to a list of repos and returns the resulting subset.
+
+  @param {Array<Object>} - An array of repos.
+
+  @returns {Array<Object>} - A subset of the input array with filters applied.
+ */
 function filterRepos(repos) {
   let filteredRepos = repos;
   if (visibilitySubset == "private") {
@@ -117,6 +134,10 @@ function filterRepos(repos) {
   return filteredRepos;
 }
 
+/* Event handler for the repo visibility filter checkboxes.
+
+  Ensures at most one filter is active at a time (but both can be off).
+*/
 function handleVisibilityCheckboxToggle(event) {
   const selectedCheckbox = event.target;
 
@@ -137,6 +158,12 @@ function handleVisibilityCheckboxToggle(event) {
   renderRepos();
 }
 
+/* Add a collaborator to a repository.
+
+  @param {string} repoName - The name of the repo (just the name, without the
+    owner username).
+  @param {string} username - The GitHub username to add as collaborator.
+*/
 async function addCollaborator(repoName, username) {
   try {
     // TODO: Parametrize this!
