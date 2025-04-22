@@ -64,6 +64,7 @@ a {
     text-decoration: none;
 }
 
+/* Homepage login-with-github link. */
 #login-link {
     display: block;
     width: 100%;
@@ -71,13 +72,40 @@ a {
     text-align: center;
 }
 
-#search-input {
-    display: block;
-    width: 100%;
+/* Search area */
+#search-container {
     max-width: var(--content-max-width);
     margin: 20px auto;
 }
+#search-input {
+    display: block;
+    width: 100%;
+}
 
+#visibility-filters {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 5px;
+}
+.visibility-filter {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.visibility-filter > input[type="checkbox"] {
+    margin: 0;
+}
+
+.visibility-filter > label {
+    margin: 0;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+}
+
+/* Repo list section */
 #repo-list-container {
     display: flex;
     justify-content: center;
@@ -148,4 +176,16 @@ td {
 
 .toggle-visibility-button {
     margin: 0 1rem;
+}
+
+#repo-info-container {
+    position: fixed;
+    top: 5vh;
+    left: 5vw;
+    height: 90vh;
+    width: 90vw;
+    background: white;
+    opacity: 90%;
+    border-radius: 10px;
+    box-shadow: #b6b6b6 0px -1px 20px 2px;
 }

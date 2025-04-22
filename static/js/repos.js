@@ -1,12 +1,31 @@
 const repoListContainer = document.getElementById("repo-list-container");
 const searchInput = document.getElementById("search-input");
+const publicReposOnlyCheckbox = document.getElementById(
+  "visibility-filter-public",
+);
+const privateReposOnlyCheckbox = document.getElementById(
+  "visibility-filter-private",
+);
+
+publicReposOnlyCheckbox.addEventListener(
+  "change",
+  handleVisibilityCheckboxToggle,
+);
+privateReposOnlyCheckbox.addEventListener(
+  "change",
+  handleVisibilityCheckboxToggle,
+);
+
+// Repos loaded from the backend
 let loadedRepos = [];
+// The type of repos to display, based on visibility: "all", "private", "public"
+let visibilitySubset = "all";
 
 document.addEventListener("DOMContentLoaded", () => {
-  renderRepos();
+  renderRepos(true);
 });
 searchInput.addEventListener("input", () => {
-  search(searchInput.value);
+  renderRepos();
 });
 
 async function loadRepos() {
@@ -16,20 +35,22 @@ async function loadRepos() {
       throw new Error("Failed to fetch repos.");
     }
 
-    loadedRepos = await response.json();
-    return loadedRepos;
+    return await response.json();
   } catch (err) {
     console.error(err);
     repoListContainer.innerHTML = "<p>Error loading repositories.</p>";
   }
 }
 
-async function renderRepos(repos) {
-  if (repos === undefined) {
-    repos = await loadRepos();
+async function renderRepos(refreshFromDB = false) {
+  if (refreshFromDB) {
+    loadedRepos = await loadRepos();
   }
-  if (repos.length === 0) {
-    repoListContainer.innerHTML = "<p>No repositories found.</p>";
+
+  displayedRepos = filterRepos(loadedRepos);
+
+  if (displayedRepos.length === 0) {
+    repoListContainer.innerHTML = "<p>No repositories to display.</p>";
     return;
   }
 
@@ -41,7 +62,7 @@ async function renderRepos(repos) {
   repoListTable.innerHTML = "";
   const repoTableBody = document.createElement("tbody");
 
-  repos.forEach((repo) => {
+  displayedRepos.forEach((repo) => {
     const toggleVisibilityUrlGenerator = repo.private
       ? generateMakePublicUrl
       : generateMakePrivateUrl;
@@ -89,15 +110,48 @@ async function toggleVisibility(event) {
     throw new Error("Error toggling visibility.");
   }
 
-  renderRepos();
+  renderRepos(true);
 }
 
-function search(searchString) {
-  const matchingRepos = loadedRepos.filter((repo) =>
-    repo.name.includes(searchString.trim()),
+function filterRepos(repos) {
+  let filteredRepos = repos;
+  if (visibilitySubset == "private") {
+    filteredRepos = filteredRepos.filter((repo) => repo.private);
+  } else if (visibilitySubset == "public") {
+    filteredRepos = filteredRepos.filter((repo) => !repo.private);
+  }
+
+  filteredRepos = filteredRepos.filter((repo) =>
+    repo.name.includes(searchInput.value.trim()),
   );
 
-  renderRepos(matchingRepos);
+  return filteredRepos;
+}
+
+function handleVisibilityCheckboxToggle(event) {
+  const selectedCheckbox = event.target;
+
+  if (
+    selectedCheckbox === publicReposOnlyCheckbox &&
+    publicReposOnlyCheckbox.checked
+  ) {
+    privateReposOnlyCheckbox.checked = false;
+  } else if (
+    selectedCheckbox === privateReposOnlyCheckbox &&
+    privateReposOnlyCheckbox.checked
+  ) {
+    publicReposOnlyCheckbox.checked = false;
+  }
+
+  if (privateReposOnlyCheckbox.checked) {
+    visibilitySubset = "private";
+  } else if (publicReposOnlyCheckbox.checked) {
+    visibilitySubset = "public";
+  } else {
+    visibilitySubset = "all";
+  }
+
+  renderRepos();
 }
 
 async function addCollaborator(repoName, username) {

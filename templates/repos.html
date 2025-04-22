@@ -1,10 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
-    <input type="text" id="search-input" placeholder="Search repos by name">
+    <div id="search-container">
+        <input type="text" id="search-input" placeholder="Search repos by name">
+        <div id="visibility-filters">
+            <div class="visibility-filter">
+                <input type="checkbox" id="visibility-filter-public">
+                <label for="visibility-filter-public">Public Only</label>
+            </div>
+            <div class="visibility-filter">
+                <input type="checkbox" id="visibility-filter-private">
+                <label for="visibility-filter-private">Private Only</label>
+            </div>
+        </div>
+    </div>
     <div id="repo-list-container">
         <p>Loading repos...</p>
     </div>
-
+    <div id="repo-info-container" class="hidden"></div>
 {% endblock %}
 
 {% block page_scripts %}
