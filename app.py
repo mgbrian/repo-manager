@@ -55,7 +55,7 @@ async def home():
     if "github_user" in session:
         return redirect(url_for("repos"))
 
-    return await render_template("index.html")
+    return await render_template("index.html", page_title="Login")
 
 
 @app.route("/login")
@@ -108,7 +108,7 @@ async def logout():
 @app.route("/repos")
 @login_required()
 async def repos():
-    return await render_template("repos.html")
+    return await render_template("repos.html", page_title="Repos")
 
 
 @app.route("/api/repos")
