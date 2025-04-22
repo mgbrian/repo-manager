@@ -29,22 +29,23 @@ searchInput.addEventListener("input", () => {
 });
 
 async function loadRepos() {
-  try {
-    const response = await fetch(REPOS_LIST_ENDPOINT);
-    if (!response.ok) {
-      throw new Error("Failed to fetch repos.");
-    }
-
-    return await response.json();
-  } catch (err) {
-    console.error(err);
-    repoListContainer.innerHTML = "<p>Error loading repositories.</p>";
+  const response = await fetch(REPOS_LIST_ENDPOINT);
+  if (!response.ok) {
+    throw new Error("Failed to fetch repos.");
   }
+
+  return await response.json();
 }
 
 async function renderRepos(refreshFromDB = false) {
   if (refreshFromDB) {
-    loadedRepos = await loadRepos();
+    try {
+      loadedRepos = await loadRepos();
+    } catch (err) {
+      console.error(err);
+      repoListContainer.innerHTML = "<p>Error loading repositories.</p>";
+      return;
+    }
   }
 
   displayedRepos = filterRepos(loadedRepos);
