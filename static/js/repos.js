@@ -1,20 +1,10 @@
 const repoListContainer = document.getElementById("repo-list-container");
 const searchInput = document.getElementById("search-input");
-const publicReposOnlyCheckbox = document.getElementById(
-  "visibility-filter-public",
-);
-const privateReposOnlyCheckbox = document.getElementById(
-  "visibility-filter-private",
-);
+const publicReposOnlyCheckbox = document.getElementById("visibility-filter-public");
+const privateReposOnlyCheckbox = document.getElementById("visibility-filter-private");
 
-publicReposOnlyCheckbox.addEventListener(
-  "change",
-  handleVisibilityCheckboxToggle,
-);
-privateReposOnlyCheckbox.addEventListener(
-  "change",
-  handleVisibilityCheckboxToggle,
-);
+publicReposOnlyCheckbox.addEventListener("change", handleVisibilityCheckboxToggle);
+privateReposOnlyCheckbox.addEventListener("change", handleVisibilityCheckboxToggle);
 
 // Repos loaded from the backend
 let loadedRepos = [];
@@ -64,9 +54,7 @@ async function renderRepos(refreshFromDB = false) {
   const repoTableBody = document.createElement("tbody");
 
   displayedRepos.forEach((repo) => {
-    const toggleVisibilityUrlGenerator = repo.private
-      ? generateMakePublicUrl
-      : generateMakePrivateUrl;
+    const toggleVisibilityUrlGenerator = repo.private ? generateMakePublicUrl : generateMakePrivateUrl;
     const toggleVisibilityLink = toggleVisibilityUrlGenerator(repo.name);
     const created = new Date(repo.created_at).toLocaleString();
     const updated = new Date(repo.updated_at).toLocaleString();
@@ -132,15 +120,9 @@ function filterRepos(repos) {
 function handleVisibilityCheckboxToggle(event) {
   const selectedCheckbox = event.target;
 
-  if (
-    selectedCheckbox === publicReposOnlyCheckbox &&
-    publicReposOnlyCheckbox.checked
-  ) {
+  if (selectedCheckbox === publicReposOnlyCheckbox && publicReposOnlyCheckbox.checked) {
     privateReposOnlyCheckbox.checked = false;
-  } else if (
-    selectedCheckbox === privateReposOnlyCheckbox &&
-    privateReposOnlyCheckbox.checked
-  ) {
+  } else if (selectedCheckbox === privateReposOnlyCheckbox && privateReposOnlyCheckbox.checked) {
     publicReposOnlyCheckbox.checked = false;
   }
 
