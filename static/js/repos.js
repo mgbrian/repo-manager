@@ -1,6 +1,13 @@
 const repoListContainer = document.getElementById("repo-list-container");
+const searchInput = document.getElementById("search-input");
+let loadedRepos = [];
 
-document.addEventListener("DOMContentLoaded", renderRepos);
+document.addEventListener("DOMContentLoaded", () => {
+  renderRepos();
+});
+searchInput.addEventListener("input", () => {
+  search(searchInput.value);
+});
 
 async function loadRepos() {
   try {
@@ -9,20 +16,26 @@ async function loadRepos() {
       throw new Error("Failed to fetch repos.");
     }
 
-    const repos = await response.json();
-    return repos;
+    loadedRepos = await response.json();
+    return loadedRepos;
   } catch (err) {
     console.error(err);
     repoListContainer.innerHTML = "<p>Error loading repositories.</p>";
   }
 }
 
-async function renderRepos() {
-  const repos = await loadRepos();
+async function renderRepos(repos) {
+  if (repos === undefined) {
+    repos = await loadRepos();
+  }
   if (repos.length === 0) {
     repoListContainer.innerHTML = "<p>No repositories found.</p>";
     return;
   }
+
+  // Clear contents from previous run.
+  repoListContainer.innerHTML = "";
+
   const repoListTable = document.createElement("table");
   repoListTable.id = "repo-list-table";
   repoListTable.innerHTML = "";
@@ -77,6 +90,14 @@ async function toggleVisibility(event) {
   }
 
   renderRepos();
+}
+
+function search(searchString) {
+  const matchingRepos = loadedRepos.filter((repo) =>
+    repo.name.includes(searchString.trim()),
+  );
+
+  renderRepos(matchingRepos);
 }
 
 async function addCollaborator(repoName, username) {

@@ -1,7 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
+    <input type="text" id="search-input" placeholder="Search repos by name">
     <div id="repo-list-container">
+        <p>Loading repos...</p>
     </div>
+
 {% endblock %}
 
 {% block page_scripts %}
