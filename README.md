@@ -1,4 +1,4 @@
-# Github Manager
+# Repo Manager
 
 An app to manage your Github repositories, providing a more convenient way to manage visibility, collaborators and permissions.
 
