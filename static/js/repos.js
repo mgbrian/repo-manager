@@ -254,7 +254,7 @@ async function renderRepoInfo(repoName) {
           </td>
           <td class="actions-cell">
             <div class="action-buttons-container">
-              <button class="remove-collaborator-button" data-repo-name="${repoName}" data-username="${collaborator.username}">
+              <button class="remove-collaborator-button ${collaborator.pending ? "invisible" : ""}" data-repo-name="${repoName}" data-username="${collaborator.username}">
                 <span class="material-icons toggle-visibility-icon">close</span>
               </button>
             </div>

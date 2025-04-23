@@ -185,10 +185,27 @@ async def list_collaborators(repo):
     collaborators = [
         {
             "username": collaborator["login"],
-            "avatar_url": collaborator["avatar_url"]
+            "avatar_url": collaborator["avatar_url"],
+            "pending": False
         }
         for collaborator in resp.json() if collaborator["login"] != session['github_user']
     ]
+
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(
+            f"{GITHUB_API_URL}/repos/{session['github_user']}/{repo}/invitations",
+            headers=github_headers(),
+        )
+
+    if resp.status_code == 200:
+        collaborators += [
+            {
+                "username": invite["invitee"]["login"],
+                "avatar_url": invite["invitee"]["html_url"],
+                "pending": True
+            }
+            for invite in resp.json()
+        ]
 
     return jsonify(collaborators)
 
