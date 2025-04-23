@@ -8,9 +8,6 @@ const repoInfoContainer = document.getElementById("repo-info-container")
 const repoInfoContainerHeader = document.getElementById("repo-info-container-header")
 const repoCollaboratorsContainer = document.getElementById("repo-collaborators-container")
 
-publicReposOnlyCheckbox.addEventListener("change", handleVisibilityCheckboxToggle);
-privateReposOnlyCheckbox.addEventListener("change", handleVisibilityCheckboxToggle);
-
 // Repos loaded from the backend
 let loadedRepos = [];
 // Time repos were last refreshed from the DB.
@@ -24,9 +21,12 @@ document.addEventListener("DOMContentLoaded", () => {
 refreshButton.addEventListener("click", () => {
   renderRepos(true)
 })
+
 searchInput.addEventListener("input", () => {
   renderRepos();
 });
+publicReposOnlyCheckbox.addEventListener("change", handleVisibilityCheckboxToggle);
+privateReposOnlyCheckbox.addEventListener("change", handleVisibilityCheckboxToggle);
 
 // Close repo info sidebar when we click anywhere else on the page.
 document.addEventListener("click", (event) => {
