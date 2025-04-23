@@ -217,7 +217,7 @@ async def add_collaborator(repo):
     return jsonify({"message": f"Added '{username}' as a collaborator."})
 
 
-@app.route("/api/repos/<string:repo>/collaborators/remove>", methods=["POST"])
+@app.route("/api/repos/<string:repo>/collaborators/remove", methods=["POST"])
 @login_required(json_response=True)
 async def remove_collaborator(repo):
     request_data = await request.get_json()

@@ -226,11 +226,37 @@ async function renderRepoInfo(repoName) {
     return;
   }
 
+  const collaboratorsListTable = document.createElement("table");
+  collaboratorsListTable.id = "collaborators-list-table";
+  collaboratorsListTable.innerHTML = "";
+  const collaboratorsTableBody = document.createElement("tbody");
+
   for (let collaborator of collaborators) {
-    repoCollaboratorsContainer.innerHTML += `
-      <span class="collaborator-username">${collaborator.username}</span>
-    `
+    collaboratorsTableBody.innerHTML += `
+        <tr>
+          <td>
+            <a href="https://github.com/${collaborator.username}" target="_blank">${collaborator.username}</a>
+          </td>
+          <td class="actions-cell">
+            <div class="action-buttons-container">
+              <button class="remove-collaborator-button" data-repo-name="${repoName}" data-username="${collaborator.username}">
+                <span class="material-icons toggle-visibility-icon">close</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
   }
+
+  const removeCollaboratorButtons = collaboratorsTableBody.getElementsByClassName(
+    "remove-collaborator-button",
+  );
+  for (let button of removeCollaboratorButtons) {
+    button.addEventListener("click", removeRepoCollaborator);
+  }
+
+  collaboratorsListTable.appendChild(collaboratorsTableBody);
+  repoCollaboratorsContainer.appendChild(collaboratorsListTable);
 }
 
 /* Get a repository's list of collaborators.
@@ -250,6 +276,42 @@ async function getRepoCollaborators(repoName) {
   }
 
   return await response.json()
+}
+
+/* Event handler for the remove repo collaborator buttons.
+
+  Remove the given collaborator and re-render the repo info sidebar.
+*/
+async function removeRepoCollaborator(event) {
+  let repoName = event.currentTarget.dataset.repoName;
+  let collaboratorUsername = event.currentTarget.dataset.username;
+
+  console.log(`Removing ${collaboratorUsername} from ${repoName}`)
+
+  try {
+    // TODO: Parametrize this!
+    const response = await fetch(`/api/repos/${repoName}/collaborators/remove`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: collaboratorUsername,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error:", errorData);
+    } else {
+      const responseData = await response.json();
+      console.log("Success:", responseData);
+      await renderRepoInfo(repoName);
+    }
+  } catch (error) {
+    console.error("Request failed:", error);
+    alert("An unexpected error occurred.");
+  }
 }
 
 /* Add a collaborator to a repository.

@@ -153,7 +153,13 @@ td {
     border-bottom: 0;
 }
 
-#repo-list-table td {
+#repo-list-table tr:hover,
+#collaborators-list-table tr:hover {
+    background: #efefef;
+}
+
+#repo-list-table td,
+#collaborators-list-table td {
     padding: 8px 15px;
 }
 
@@ -246,4 +252,8 @@ td {
     background: #e1e1e1;
     padding: 2px 15px;
     border-radius: 99vh;
+}
+
+#collaborators-list-table {
+    width: 100%;
 }
