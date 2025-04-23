@@ -4,9 +4,9 @@ const searchInput = document.getElementById("search-input");
 const publicReposOnlyCheckbox = document.getElementById("visibility-filter-public");
 const privateReposOnlyCheckbox = document.getElementById("visibility-filter-private");
 const repoListContainer = document.getElementById("repo-list-container");
-const repoInfoContainer = document.getElementById("repo-info-container")
-const repoInfoContainerHeader = document.getElementById("repo-info-container-header")
-const repoCollaboratorsContainer = document.getElementById("repo-collaborators-container")
+const repoInfoContainer = document.getElementById("repo-info-container");
+const repoInfoContainerHeader = document.getElementById("repo-info-container-header");
+const repoCollaboratorsContainer = document.getElementById("repo-collaborators-container");
 
 // Repos loaded from the backend
 let loadedRepos = [];
@@ -223,13 +223,28 @@ async function renderRepoInfo(repoName) {
   repoCollaboratorsContainer.innerHTML = "";
   if (collaborators.length === 0) {
     repoCollaboratorsContainer.innerHTML += "<p>No collaborators.</p>";
-    return;
   }
 
   const collaboratorsListTable = document.createElement("table");
   collaboratorsListTable.id = "collaborators-list-table";
   collaboratorsListTable.innerHTML = "";
   const collaboratorsTableBody = document.createElement("tbody");
+
+  // Row with the add collaborator input.
+  collaboratorsTableBody.innerHTML += `
+    <tr id="add-collaborator-row">
+      <td id="add-collaborator-cell">
+        <input id="add-collaborator-input" type="text" placeholder="Username to add">
+      </td>
+      <td class="actions-cell">
+        <div class="action-buttons-container">
+          <button id="add-collaborator-button" data-repo-name="${repoName}">
+            <span class="material-icons toggle-visibility-icon">add</span>
+          </button>
+        </div>
+      </td>
+    </tr>
+  `;
 
   for (let collaborator of collaborators) {
     collaboratorsTableBody.innerHTML += `
@@ -247,6 +262,10 @@ async function renderRepoInfo(repoName) {
         </tr>
       `;
   }
+
+  const addCollaboratorButton = collaboratorsTableBody.querySelector("#add-collaborator-button");
+  addCollaboratorButton.addEventListener("click", addRepoCollaborator);
+  console.log(addCollaboratorButton)
 
   const removeCollaboratorButtons = collaboratorsTableBody.getElementsByClassName(
     "remove-collaborator-button",
@@ -320,7 +339,15 @@ async function removeRepoCollaborator(event) {
     owner username).
   @param {string} username - The GitHub username to add as collaborator.
 */
-async function addCollaborator(repoName, username) {
+async function addRepoCollaborator(event) {
+  const addCollaboratorInput = document.getElementById("add-collaborator-input")
+  let repoName = event.currentTarget.dataset.repoName;
+  let collaboratorUsername = addCollaboratorInput.value.trim();
+
+  if (!collaboratorUsername) {
+    return;
+  }
+
   try {
     // TODO: Parametrize this!
     const response = await fetch(`/api/repos/${repoName}/collaborators/add`, {
@@ -329,20 +356,19 @@ async function addCollaborator(repoName, username) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: username,
+        username: collaboratorUsername,
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.json();
       console.error("Error:", errorData);
-      alert(
-        "Failed to add collaborator: " + (errorData.error || "Unknown error"),
-      );
+      alert(`Failed to add ${collaboratorUsername} as a collaborator.`);
     } else {
+      addCollaboratorInput.value = "";
       const data = await response.json();
       console.log("Success:", data);
-      alert(data.message);
+      alert(`Invite sent to ${collaboratorUsername}!`);
     }
   } catch (error) {
     console.error("Request failed:", error);

@@ -240,6 +240,27 @@ td {
     border-bottom: 1.5px solid #e1e1e1;
 }
 
+#add-collaborator-row {
+    width: 100%;
+    height: 80px;
+}
+
+#add-collaborator-row:hover {
+    /* Override background colour change. */
+    background: initial !important;
+}
+
+#add-collaborator-cell {
+    /* Marking important to override the #collaborators-list-table td rule. */
+    padding-right: 0 !important;
+}
+
+#add-collaborator-input {
+    display: block;
+    width: 100%;
+    margin: 0;
+}
+
 #repo-collaborators-container {
     display: flex;
     flex-direction: row;
