@@ -73,6 +73,21 @@ a {
     text-align: center;
 }
 
+#last-refreshed-info-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    max-width: var(--content-max-width);
+    font-size: 1.2rem;
+    margin: 0 auto;
+}
+
+#refresh-button {
+    cursor: pointer;
+}
+
 /* Search area */
 #search-container {
     max-width: var(--content-max-width);

@@ -1,19 +1,27 @@
-const repoListContainer = document.getElementById("repo-list-container");
+const refreshButton = document.getElementById("refresh-button");
+const lastRefreshedText = document.getElementById("last-refreshed-text");
 const searchInput = document.getElementById("search-input");
 const publicReposOnlyCheckbox = document.getElementById("visibility-filter-public");
 const privateReposOnlyCheckbox = document.getElementById("visibility-filter-private");
+const repoListContainer = document.getElementById("repo-list-container");
+
 
 publicReposOnlyCheckbox.addEventListener("change", handleVisibilityCheckboxToggle);
 privateReposOnlyCheckbox.addEventListener("change", handleVisibilityCheckboxToggle);
 
 // Repos loaded from the backend
 let loadedRepos = [];
+// Time repos were last refreshed from the DB.
+let lastRefreshedTime;
 // The type of repos to display, based on visibility: "all", "private", "public"
 let visibilitySubset = "all";
 
 document.addEventListener("DOMContentLoaded", () => {
   renderRepos(true);
 });
+refreshButton.addEventListener("click", () => {
+  renderRepos(true)
+})
 searchInput.addEventListener("input", () => {
   renderRepos();
 });
@@ -41,6 +49,10 @@ async function renderRepos(refreshFromDB = false) {
   if (refreshFromDB) {
     try {
       loadedRepos = await loadRepos();
+      lastRefreshedTime = new Date();
+      if (lastRefreshedTime){
+        lastRefreshedText.textContent = `Last Refreshed: ${lastRefreshedTime.toLocaleString()}`
+      }
     } catch (err) {
       console.error(err);
       repoListContainer.innerHTML = "<p>Error loading repositories.</p>";

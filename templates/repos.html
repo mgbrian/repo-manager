@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
+    <div id="last-refreshed-info-container" class="">
+        <span id="last-refreshed-text"></span>
+        <span id="refresh-button" class="material-icons toggle-visibility-icon">refresh</span>
+    </div>
     <div id="search-container">
         <input type="text" id="search-input" placeholder="Search repos by name">
         <div id="visibility-filters">
