@@ -4,7 +4,9 @@ const searchInput = document.getElementById("search-input");
 const publicReposOnlyCheckbox = document.getElementById("visibility-filter-public");
 const privateReposOnlyCheckbox = document.getElementById("visibility-filter-private");
 const repoListContainer = document.getElementById("repo-list-container");
-
+const repoInfoContainer = document.getElementById("repo-info-container")
+const repoInfoContainerHeader = document.getElementById("repo-info-container-header")
+const repoCollaboratorsContainer = document.getElementById("repo-collaborators-container")
 
 publicReposOnlyCheckbox.addEventListener("change", handleVisibilityCheckboxToggle);
 privateReposOnlyCheckbox.addEventListener("change", handleVisibilityCheckboxToggle);
@@ -24,6 +26,16 @@ refreshButton.addEventListener("click", () => {
 })
 searchInput.addEventListener("input", () => {
   renderRepos();
+});
+
+// Close repo info sidebar when we click anywhere else on the page.
+document.addEventListener("click", (event) => {
+  if (!repoInfoContainer.classList.contains("sidebar-hidden")) {
+    repoInfoContainer.classList.add("sidebar-hidden")
+  }
+})
+repoInfoContainer.addEventListener("click", function(event) {
+  event.stopPropagation();
 });
 
 /* Fetch list of repositories from the backend.
@@ -50,7 +62,7 @@ async function renderRepos(refreshFromDB = false) {
     try {
       loadedRepos = await loadRepos();
       lastRefreshedTime = new Date();
-      if (lastRefreshedTime){
+      if (lastRefreshedTime) {
         lastRefreshedText.textContent = `Last Refreshed: ${lastRefreshedTime.toLocaleString()}`
       }
     } catch (err) {
@@ -92,7 +104,7 @@ async function renderRepos(refreshFromDB = false) {
               <button class="toggle-visibility-button" data-href="${toggleVisibilityLink}">
                 <span class="material-icons toggle-visibility-icon">${repo.private ? "visibility" : "visibility_off"}</span>
               </button>
-              <button class="collaborators-button" data-href="">
+              <button class="collaborators-button" data-repo-name="${repo.name}">
                 <span class="material-icons show-collaborators-icon">group</span>
               </button>
             </div>
@@ -107,6 +119,14 @@ async function renderRepos(refreshFromDB = false) {
   for (let button of toggleVisibilityButtons) {
     button.addEventListener("click", toggleVisibility);
   }
+
+  const collaboratorsButtons = repoTableBody.getElementsByClassName(
+    "collaborators-button",
+  );
+  for (let button of collaboratorsButtons) {
+    button.addEventListener("click", showRepoInfo);
+  }
+
   repoListTable.appendChild(repoTableBody);
   repoListContainer.appendChild(repoListTable);
 }
@@ -168,6 +188,68 @@ function handleVisibilityCheckboxToggle(event) {
   }
 
   renderRepos();
+}
+
+/* Event handler for the repo collaborator info buttons.
+
+  Shows the repo info sidebar.
+*/
+function showRepoInfo(event) {
+  // Keep event from propagating up to document as this would immediately close
+  // the sidebar.
+  event.stopPropagation();
+  repoInfoContainer.classList.remove("sidebar-hidden");
+  const repoName = event.currentTarget.dataset.repoName;
+  renderRepoInfo(repoName)
+}
+
+/* Render a repo's info in the sidebar.
+
+  @param {string} repoName - The name of the repo (just the name, without the
+    owner username).
+*/
+async function renderRepoInfo(repoName) {
+  repoInfoContainerHeader.textContent = repoName;
+  repoCollaboratorsContainer.innerHTML = "<p>Loading collaborators..</p>";
+
+  try {
+    var collaborators = await getRepoCollaborators(repoName)
+  } catch (err) {
+    console.error(err);
+    repoCollaboratorsContainer.innerHTML = `<p>Error loading collaborators info.</p>`;
+    return;
+  }
+
+  repoCollaboratorsContainer.innerHTML = "";
+  if (collaborators.length === 0) {
+    repoCollaboratorsContainer.innerHTML += "<p>No collaborators.</p>";
+    return;
+  }
+
+  for (let collaborator of collaborators) {
+    repoCollaboratorsContainer.innerHTML += `
+      <span class="collaborator-username">${collaborator.username}</span>
+    `
+  }
+}
+
+/* Get a repository's list of collaborators.
+
+  @param {string} repoName - The name of the repo (just the name, without the
+    owner username).
+
+  @returns {Array<Object>} - An array of objects containing collaborators' GitHub
+    usernames and other info.
+*/
+async function getRepoCollaborators(repoName) {
+  const url = generateListCollaboratorsUrl(repoName);
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error("Error fetching collaborators.");
+  }
+
+  return await response.json()
 }
 
 /* Add a collaborator to a repository.

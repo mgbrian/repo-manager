@@ -20,7 +20,13 @@
     <div id="repo-list-container">
         <p>Loading repos...</p>
     </div>
-    <div id="repo-info-container" class="hidden"></div>
+
+    <div id="repo-info-container" class="sidebar-hidden">
+        <h2 id="repo-info-container-header"></h2>
+        <div id="repo-collaborators-container">
+            <p>No repo selected.</p>
+        </div>
+    </div>
 {% endblock %}
 
 {% block page_scripts %}
@@ -34,6 +40,11 @@
   function generateMakePublicUrl(repoName) {
     return `{{ url_for('make_public', repo='${repoName}') | replace('%7B', '{') | replace('%7D', '}') }}`
   }
+
+  function generateListCollaboratorsUrl(repoName) {
+    return `{{ url_for('list_collaborators', repo='${repoName}') | replace('%7B', '{') | replace('%7D', '}') }}`
+  }
+
 </script>
 <script src="{{ url_for('static', filename='js/repos.js') }}"></script>
 {% endblock %}

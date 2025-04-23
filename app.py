@@ -183,10 +183,10 @@ async def list_collaborators(repo):
 
     collaborators = [
         {
-            "name": collaborator["login"],
+            "username": collaborator["login"],
             "avatar_url": collaborator["avatar_url"]
         }
-        for collaborator in resp.json()
+        for collaborator in resp.json() if collaborator["login"] != session['github_user']
     ]
 
     return jsonify(collaborators)
