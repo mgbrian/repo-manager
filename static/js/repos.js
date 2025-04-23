@@ -101,7 +101,7 @@ async function renderRepos(refreshFromDB = false) {
           </td>
           <td class="actions-cell">
             <div class="action-buttons-container">
-              <button class="toggle-visibility-button" data-href="${toggleVisibilityLink}">
+              <button class="toggle-visibility-button ${repo.fork? "invisible" : ""}" data-href="${toggleVisibilityLink}">
                 <span class="material-icons toggle-visibility-icon">${repo.private ? "visibility" : "visibility_off"}</span>
               </button>
               <button class="collaborators-button" data-repo-name="${repo.name}">

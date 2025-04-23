@@ -127,6 +127,7 @@ async def list_repos():
             "url": repo["html_url"],
             "owner": repo["owner"]["login"],
             "private": repo["private"],
+            "fork": repo["fork"],
             "created_at": repo["created_at"],
             "updated_at": repo["updated_at"],
         }
