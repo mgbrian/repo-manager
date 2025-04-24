@@ -95,7 +95,10 @@ async function renderRepos(refreshFromDB = false) {
 
     repoTableBody.innerHTML += `
         <tr data-created-date="${created}" data-updated-date="${updated}">
-          <td><a href="${repo.url}" target="_blank">${repo.name}</a></td>
+          <td class="name-cell">
+            <a href="${repo.url}" target="_blank">${repo.name}</a>
+            ${repo.fork ? "<small>Fork</small>" : ""}
+          </td>
           <td class="visibility-cell">
             ${repo.private ? "Private" : "Public"}
           </td>

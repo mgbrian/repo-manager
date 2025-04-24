@@ -163,6 +163,15 @@ td {
     padding: 8px 15px;
 }
 
+.name-cell small {
+    padding: 0px 8px;
+    margin-left: 5px;
+    display: inline-block;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    font-weight: bold;
+}
+
 .visibility-cell {
     text-transform: uppercase;
     font-size: 1.15rem;
