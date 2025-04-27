@@ -20,7 +20,7 @@ An app to manage your Github repositories, providing a more convenient way to ma
 1. Run the installer script:
 
    ```sh
-   chmod +x install.sh
+   ./install.sh
    ```
 
 1. **Set Up Environment Variables**
