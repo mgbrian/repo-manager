@@ -252,8 +252,9 @@ async function renderRepoInfo(repoName) {
   for (let collaborator of collaborators) {
     collaboratorsTableBody.innerHTML += `
         <tr>
-          <td>
+          <td class="name-cell">
             <a href="https://github.com/${collaborator.username}" target="_blank">${collaborator.username}</a>
+            ${collaborator.pending ? "<small>Invited</small>" : ""}
           </td>
           <td class="actions-cell">
             <div class="action-buttons-container">
